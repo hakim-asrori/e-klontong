@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('http://localhost:5173/');
+    return redirect('https://e-klontong.hakimasrori.my.id/');
 });
 
 // Route::get('/', function () {
