@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('https://e-klontong.hakimasrori.my.id/');
+    return redirect('https://eklontong.hakimasrori.my.id/');
 });
 
 // Route::get('/', function () {
