@@ -128,7 +128,8 @@ class OrderController extends Controller
 
                 $order->orderItems()->create([
                     'product_id' => $cartItem->product_id,
-                    'quantity' => $cartItem->quantity
+                    'quantity' => $cartItem->quantity,
+                    'price' => $cartItem->price
                 ]);
 
                 $cartItem->delete();
@@ -147,6 +148,13 @@ class OrderController extends Controller
             DB::rollBack();
             return MessageFixer::error($th->getMessage());
         }
+    }
+
+    public function exportPdf($id)
+    {
+        $record = $this->order->findOrFail($id);
+
+        return view('filament.resources.order-resource.pages.invoice-pdf', compact('record'));
     }
 
     protected function formatMessage($order, $cartItems)
