@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\DeliveryServiceEnum;
+use App\Enums\WeightParamEnum;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
@@ -46,6 +47,8 @@ class ProductResource extends Resource
                 TextInput::make('name')->required(true)->maxLength(150),
                 TextInput::make('price')->required(true)->numeric(),
                 TextInput::make('weight')->required(true)->numeric(),
+                Select::make('weight_type')->options(WeightParamEnum::all())
+                    ->required(),
                 Textarea::make('description')->required(true)->maxLength(255),
                 Select::make('type')->options(function (?Product $product, Get $get, Set $set) {
                     if (!empty($product->name)) {
@@ -56,7 +59,7 @@ class ProductResource extends Resource
                 })
                     ->label('Delivery Service')
                     ->required(),
-                Select::make('category')->required()->multiple()->relationship('categories', 'name'),
+                Select::make('category')->required()->multiple()->relationship('categories', 'name')->preload()->searchable(),
                 Repeater::make('image')
                     ->relationship('image')  // Relasi hasMany dengan tabel images
                     ->schema([
