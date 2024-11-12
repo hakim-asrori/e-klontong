@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\DeliveryServiceEnum;
+use App\Enums\WeightParamEnum;
 use App\Facades\MessageFixer;
 use App\Models\Category;
 use App\Models\Product;
@@ -74,6 +75,7 @@ class ProductController extends Controller
             $product->image = $image;
             $product->categories = $categories;
             $product->delivery_service = $deliveryService;
+            $product->weight_type = WeightParamEnum::show($product->weight_type);
 
             return $product;
         });
