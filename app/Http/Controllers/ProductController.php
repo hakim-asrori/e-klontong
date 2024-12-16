@@ -102,11 +102,13 @@ class ProductController extends Controller
     protected function detail($product, $request)
     {
         DB::beginTransaction();
-        dd($product);
+        
         try {
-            $this->product->find($product["id"])->update([
-                "last_seen" => $product["last_seen"] + 1
-            ]);
+            if (count($product) > 0) {
+                $this->product->find($product[0]->id)->update([
+                    "last_seen" => $product[0]->last_seen + 1
+                ]);
+            }
 
             DB::commit();
             return MessageFixer::render(
