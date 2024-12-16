@@ -82,7 +82,7 @@ class ProductController extends Controller
         });
 
         if ($request->has('product_id') || $request->has('slug')) {
-            return $this->detail($products->items());
+            return $this->detail($products->items(), $request);
         }
 
         return MessageFixer::render(
@@ -99,12 +99,12 @@ class ProductController extends Controller
         );
     }
 
-    protected function detail($product)
+    protected function detail($product, $request)
     {
         DB::beginTransaction();
 
         try {
-            $this->product->find($product->id)->update([
+            $this->product->find($request->product_id)->update([
                 "last_seen" => $product->last_seen + 1
             ]);
 
