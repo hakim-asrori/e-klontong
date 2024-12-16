@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -100,10 +101,22 @@ class ProductController extends Controller
 
     protected function detail($product)
     {
-        return MessageFixer::render(
-            code: count($product) > 0 ? MessageFixer::DATA_OK : MessageFixer::DATA_NULL,
-            message: count($product) > 0 ? null : "Product no available.",
-            data: count($product) > 0 ? $product[0] : null
-        );
+        DB::beginTransaction();
+
+        try {
+            $this->product->find($product->id)->update([
+                "last_seen" => $product->last_seen + 1
+            ]);
+
+            DB::commit();
+            return MessageFixer::render(
+                code: count($product) > 0 ? MessageFixer::DATA_OK : MessageFixer::DATA_NULL,
+                message: count($product) > 0 ? null : "Product no available.",
+                data: count($product) > 0 ? $product[0] : null
+            );
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return MessageFixer::error($th->getMessage());
+        }
     }
 }
