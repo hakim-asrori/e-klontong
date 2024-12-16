@@ -102,10 +102,10 @@ class ProductController extends Controller
     protected function detail($product, $request)
     {
         DB::beginTransaction();
-
+        dd($product);
         try {
-            $this->product->find($request->product_id)->update([
-                "last_seen" => $product->last_seen + 1
+            $this->product->find($product["id"])->update([
+                "last_seen" => $product["last_seen"] + 1
             ]);
 
             DB::commit();
