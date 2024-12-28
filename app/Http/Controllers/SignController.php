@@ -31,6 +31,10 @@ class SignController extends Controller
         if (!Hash::check($request->password, $user->password)) {
             return MessageFixer::render(code: MessageFixer::DATA_NULL, message: 'Account not found');
         }
+        
+        if (!$user->status) {
+            return MessageFixer::render(code: MessageFixer::UNAUTHORIZATION, message: 'Account Suspend');
+        }
 
         try {
             $token = $user->createToken('api', ['customer'])->plainTextToken;
