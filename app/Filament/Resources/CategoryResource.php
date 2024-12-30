@@ -54,7 +54,7 @@ class CategoryResource extends Resource
                     1 => 'Horizontal',
                     0 => 'Vertical',
                 ])->required()->visible(fn(callable $get) => $get('enable_home')),
-                TextInput::make('per_page')->required(true)->minLength(0)->numeric()->maxLength(10)->default(0)->visible(fn(callable $get) => $get('enable_home')),
+                TextInput::make('per_page')->label('Total Product')->required(true)->minLength(0)->numeric()->maxLength(10)->default(0)->visible(fn(callable $get) => $get('enable_home')),
             ]);
     }
 
