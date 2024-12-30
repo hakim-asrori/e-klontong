@@ -46,7 +46,7 @@ class CategoryResource extends Resource
                     ->directory('categories/' . date('Y/Ym/Ymd'))
                     ->image()
                     ->maxSize(2048),
-                ToggleButtons::make("enable_home")->boolean()->grouped()->icons([
+                ToggleButtons::make("enable_home")->label("Appears on the Home Page?")->boolean()->grouped()->icons([
                     true => "heroicon-o-check",
                     false => "heroicon-o-x-mark",
                 ])->required()->default(false)->live(),
@@ -77,13 +77,16 @@ class CategoryResource extends Resource
                             break;
                     }
                 }),
+                TextColumn::make('enable_home')->label("Appears on the Home Page?")->formatStateUsing(function ($state) {
+                    return $state ? 'Active' : 'Non Active';
+                }),
                 ToggleColumn::make('status')
                     ->afterStateUpdated(function ($state, $record) {
                         Notification::make()
                             ->title('Update status successfully')
                             ->success()
                             ->send();
-                    })
+                    }),
             ])
             ->filters([
                 SelectFilter::make("status")
