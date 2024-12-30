@@ -54,9 +54,16 @@ class CategoryController extends Controller
             $category->image = $image;
 
             if ($request->has('enable_home') && $request->enable_home == 1) {
-                $category->products = $this->product->query()->whereHas('categories', function ($query) use ($category) {
+                $products = $this->product->query()->whereHas('categories', function ($query) use ($category) {
                     $query->where('category_id', $category->id);
                 })->orderBy('id', 'desc')->limit($category->per_page)->get()->load(['image']);
+
+                $products->getCollection()->transform(function ($product) {
+                    $product->image = url(Storage::url($product->image->path));
+                    return $product;
+                });
+
+                $category->products = $products;
             }
 
             return $category;
