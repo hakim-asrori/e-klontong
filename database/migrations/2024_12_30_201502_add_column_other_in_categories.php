@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('categories', function (Blueprint $table) {
             $table->boolean('enable_home')->default(false)->after('type');
             $table->integer('per_page')->default(8)->after('type');
+            $table->boolean('direction')->default(false)->after('type');
         });
     }
 
@@ -23,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->dropColumn(['enable_home', 'per_page']);
+            $table->dropColumn(['enable_home', 'per_page', 'direction']);
         });
     }
 };

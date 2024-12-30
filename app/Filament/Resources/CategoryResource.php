@@ -50,6 +50,10 @@ class CategoryResource extends Resource
                     true => "heroicon-o-check",
                     false => "heroicon-o-x-mark",
                 ])->required()->default(false)->live(),
+                Select::make('direction')->label('Format Layout')->options([
+                    1 => 'Horizontal',
+                    0 => 'Vertical',
+                ])->required()->visible(fn(callable $get) => $get('enable_home')),
                 TextInput::make('per_page')->required(true)->minLength(0)->numeric()->maxLength(10)->default(0)->visible(fn(callable $get) => $get('enable_home')),
             ]);
     }
