@@ -29,7 +29,7 @@ Route::post('app', function () {
 });
 
 Route::post('products', [ProductController::class, 'index']);
-Route::get('categories', [CategoryController::class, 'index']);
+Route::post('categories', [CategoryController::class, 'index']);
 
 Route::middleware(['guest'])->prefix('sign')->group(function () {
     Route::post('up', [SignController::class, 'up']);
