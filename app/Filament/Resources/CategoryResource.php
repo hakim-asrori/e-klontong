@@ -49,7 +49,7 @@ class CategoryResource extends Resource
                 ToggleButtons::make("enable_home")->label("Appears on the Home Page?")->boolean()->grouped()->icons([
                     true => "heroicon-o-check",
                     false => "heroicon-o-x-mark",
-                ])->required()->default(false)->live(),
+                ])->required()->default(false)->live()->columnSpanFull(),
                 Select::make('direction')->label('Format Layout')->options([
                     1 => 'Horizontal',
                     0 => 'Vertical',
