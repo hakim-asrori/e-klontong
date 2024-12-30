@@ -4,17 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Facades\MessageFixer;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    protected $category;
+    protected $category, $product;
 
-    public function __construct(Category $category)
+    public function __construct(Category $category, Product $product)
     {
         $this->category = $category;
+        $this->product = $product;
     }
 
     public function index(Request $request)
@@ -27,6 +29,10 @@ class CategoryController extends Controller
 
         if ($request->has('type')) {
             $query->where('type', $request->type);
+        }
+
+        if ($request->has('enable_home')) {
+            $query->where('enable_home', $request->enable_home);
         }
 
         if ($request->has('category_id')) {
@@ -42,10 +48,16 @@ class CategoryController extends Controller
         $countCategory = $query->count();
         $categories = $query->paginate($request->per_page);
 
-        $categories->getCollection()->transform(function ($category) {
+        $categories->getCollection()->transform(function ($category) use ($request) {
             $image = url(Storage::url($category->image));
 
             $category->image = $image;
+
+            if ($request->has('enable_home') && $request->enable_home == 1) {
+                $category->products = $this->product->query()->whereHas('categories', function ($query) use ($category) {
+                    $query->where('category_id', $category->id);
+                })->orderBy('id', 'desc')->limit($category->per_page)->get()->load(['image']);
+            }
 
             return $category;
         });

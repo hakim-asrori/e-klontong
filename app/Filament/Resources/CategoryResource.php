@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -45,6 +46,11 @@ class CategoryResource extends Resource
                     ->directory('categories/' . date('Y/Ym/Ymd'))
                     ->image()
                     ->maxSize(2048),
+                ToggleButtons::make("enable_home")->boolean()->grouped()->icons([
+                    true => "heroicon-o-check",
+                    false => "heroicon-o-x-mark",
+                ])->required()->default(false)->live(),
+                TextInput::make('per_page')->required(true)->minLength(0)->numeric()->maxLength(10)->default(0)->visible(fn(callable $get) => $get('enable_home')),
             ]);
     }
 
