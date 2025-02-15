@@ -201,7 +201,7 @@ class OrderController extends Controller
         }
         $messages[] = "";
         $messages[] = "Total Pembelian: " . number_format($order->total, 0, ",", ".");
-        $messages[] = "Order Via: " . $order->delivery_service == 1 ? "Udara" : "Laut";
+        $messages[] = "Order Via: " . $order->delivery_service == 2 ? "Udara" : "Laut";
 
         $implodeMessage = implode("\r\n", $messages);
         $implodeMessage = urlencode($implodeMessage);
