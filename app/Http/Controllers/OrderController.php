@@ -154,6 +154,7 @@ class OrderController extends Controller
             );
         } catch (\Throwable $th) {
             DB::rollBack();
+            dd($th);
             return MessageFixer::error($th->getMessage());
         }
     }
