@@ -150,6 +150,40 @@ class OrderController extends Controller
         }
     }
 
+    public function cancel(Request $request)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            "order_id" => "required|numeric|integer",
+            "status" => "required|in:" . $this->order::CANCEL
+        ]);
+
+        if ($validator->fails()) {
+            return MessageFixer::render(code: MessageFixer::INVALID_BODY, message: 'Warning Process', data: $validator->errors());
+        }
+
+        $order = $this->order->find($request->order_id);
+
+        if ($order->status > $this->order::ORDER) {
+            return MessageFixer::render(code: MessageFixer::WARNING_PROCESS, message: 'Orders cannot be cancelled, because your order has already been processed', data: $order);
+        }
+
+        try {
+            $order->update([
+                "status" => $request->status
+            ]);
+
+            DB::commit();
+            return MessageFixer::success(
+                message: "Order has been cancelled",
+            );
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return MessageFixer::error($th->getMessage());
+        }
+    }
+
     public function exportPdf($id)
     {
         $record = $this->order->findOrFail($id);

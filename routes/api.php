@@ -51,6 +51,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('update-default', [AddressController::class, 'updateDefault']);
         Route::post('delete', [AddressController::class, 'delete']);
         Route::post('store', [AddressController::class, 'store']);
+        Route::post('update', [AddressController::class, 'update']);
         Route::post('provinces', [AddressController::class, 'getProvinces']);
         Route::post('regencies', [AddressController::class, 'getRegencies']);
         Route::post('districts', [AddressController::class, 'getDistricts']);

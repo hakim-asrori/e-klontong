@@ -6,6 +6,7 @@ use App\Facades\MessageFixer;
 use App\Facades\RegionFixer;
 use App\Models\Address;
 use App\Models\District;
+use App\Models\NewAddress;
 use App\Models\Province;
 use App\Models\Regency;
 use App\Models\UserAddress;
@@ -21,7 +22,7 @@ class AddressController extends Controller
 {
     protected $address, $province, $regency, $district, $village, $userAddress;
 
-    public function __construct(Address $address, Province $province, Regency $regency, District $district, Village $village, UserAddress $userAddress)
+    public function __construct(NewAddress $address, Province $province, Regency $regency, District $district, Village $village, UserAddress $userAddress)
     {
         $this->address = $address;
         $this->province = $province;
@@ -33,7 +34,7 @@ class AddressController extends Controller
 
     public function index(Request $request)
     {
-        $query = $this->userAddress->query();
+        $query = $this->address->query();
 
         $query->where("user_id", $request->user()->id);
 
@@ -91,10 +92,8 @@ class AddressController extends Controller
         DB::beginTransaction();
 
         $validator = Validator::make($request->all(), [
-            'province_id' => 'required|numeric|not_in:0',
-            'regency_id' => 'required|numeric|not_in:0',
-            'district_id' => 'required|numeric|not_in:0',
-            'village_id' => 'required|numeric|not_in:0',
+            'prefektur' => 'required|max:100',
+            'city' => 'required|max:100',
             'name' => 'required|max:100',
             'phone' => 'required|numeric|not_in:0',
             'detail' => 'max:200',
@@ -134,7 +133,7 @@ class AddressController extends Controller
         DB::beginTransaction();
 
         $validator = Validator::make($request->all(), [
-            'address_id' => 'required|exists:addresses,id'
+            'address_id' => 'required|exists:new_addresses,id'
         ]);
 
         if ($validator->fails()) {
@@ -158,12 +157,17 @@ class AddressController extends Controller
         }
     }
 
-    public function delete(Request $request)
+    public function update(Request $request)
     {
         DB::beginTransaction();
 
         $validator = Validator::make($request->all(), [
-            'address_id' => 'required|exists:addresses,id'
+            'prefektur' => 'required|max:100',
+            'city' => 'required|max:100',
+            'name' => 'required|max:100',
+            'phone' => 'required|numeric|not_in:0',
+            'detail' => 'max:200',
+            'address_id' => 'required|exists:new_addresses,id'
         ]);
 
         if ($validator->fails()) {
@@ -171,7 +175,52 @@ class AddressController extends Controller
         }
 
         try {
-            $this->address->find($request->address_id)->delete();
+            if ($request->is_default == true) {
+                $this->address->where('user_id', $request->user()->id)->update([
+                    'is_default' => 0
+                ]);
+            }
+
+            $request->merge([
+                'is_default' => $request->is_default ? 1 : 0
+            ]);
+
+            $this->address->where("id", $request->address_id)->update($request->except(['address_id']));
+
+            DB::commit();
+            return MessageFixer::success(message: "Address has been saved");
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return MessageFixer::error($th->getMessage());
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'address_id' => 'required|exists:new_addresses,id'
+        ]);
+
+        if ($validator->fails()) {
+            return MessageFixer::render(code: MessageFixer::INVALID_BODY, message: 'Warning Process', data: $validator->errors());
+        }
+
+        $address = $this->address->find($request->address_id);
+
+        if ($this->address->where('user_id', $request->user()->id)->count() <= 1) {
+            return MessageFixer::render(code: MessageFixer::WARNING_PROCESS, message: "All addresses cannot be deleted, because there must be at least one address");
+        }
+
+        try {
+            if ($address->is_default == 1) {
+                $this->address->where('user_id', $request->user()->id)->first()->update([
+                    'is_default' => 1
+                ]);
+            }
+
+            $address->delete();
 
             DB::commit();
             return MessageFixer::success(message: "Address has been deleted");

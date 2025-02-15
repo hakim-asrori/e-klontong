@@ -11,6 +11,12 @@ class Order extends Model
 
     protected $guarded = [];
 
+    const ORDER = 1;
+    const PACKING = 2;
+    const SEND = 3;
+    const RECEIVE = 4;
+    const CANCEL = 5;
+
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class, 'order_id', 'id');
