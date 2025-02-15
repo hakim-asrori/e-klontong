@@ -118,12 +118,14 @@ class OrderController extends Controller
             ]);
 
             $totalPrice = 0;
+            $totalWeight = 0;
             $cartItems = [];
             foreach ($request->item_ids as $id) {
                 $cartItem = $this->cartItem->selectRaw('cart_items.id, cart_items.product_id, products.name, cart_items.quantity, products.price, products.weight, COALESCE(products.price * cart_items.quantity, 0) AS total_price, COALESCE(products.weight * cart_items.quantity, 0) AS total_weight')
                     ->leftJoin('products', 'products.id', '=', 'cart_items.product_id')
                     ->find($id);
                 $totalPrice += $cartItem->total_price;
+                $totalWeight += $cartItem->total_weight;
                 $cartItems[] = $cartItem;
 
                 $order->orderItems()->create([
@@ -136,7 +138,8 @@ class OrderController extends Controller
             }
 
             $order->update([
-                'total' => $totalPrice
+                'total' => $totalPrice,
+                'total_weight' => $totalWeight
             ]);
 
             DB::commit();
