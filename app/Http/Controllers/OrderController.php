@@ -156,7 +156,6 @@ class OrderController extends Controller
 
         $validator = Validator::make($request->all(), [
             "order_id" => "required|numeric|integer",
-            "status" => "required|in:" . $this->order::CANCEL
         ]);
 
         if ($validator->fails()) {
@@ -171,7 +170,7 @@ class OrderController extends Controller
 
         try {
             $order->update([
-                "status" => $request->status
+                "status" => $this->order::CANCEL
             ]);
 
             DB::commit();

@@ -44,6 +44,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('orders', [OrderController::class, 'index']);
     Route::post('order/store', [OrderController::class, 'store']);
+    Route::post('order/cancel', [OrderController::class, 'cancel']);
 
     Route::post('addresses', [AddressController::class, 'index']);
     Route::prefix('address')->group(function () {
