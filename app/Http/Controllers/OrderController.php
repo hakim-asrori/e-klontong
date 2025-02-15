@@ -95,7 +95,7 @@ class OrderController extends Controller
             'item_ids' => 'required|array',
             'item_ids.*' => 'required|exists:cart_items,id',
             'service' => 'required|in:1,2',
-            'address_id' => 'required|exists:addresses,id',
+            'address_id' => 'required|exists:new_addresses,id',
             'address' => 'required|max:150',
             'name' => 'required|max:150',
             'phone' => 'required|max:15',
