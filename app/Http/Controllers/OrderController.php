@@ -210,7 +210,8 @@ class OrderController extends Controller
         }
         $messages[] = "";
         $messages[] = "Total Pembelian: " . number_format($order->total, 0, ",", ".");
-        $messages[] = "Total Berat: " . json_decode($order->total_weight);
+        $messages[] = "Total Berat Kg: " . json_decode($order->total_weight)->kg;
+        $messages[] = "Total Berat Gram: " . json_decode($order->total_weight)->gram;
         $messages[] = "Order Via: " . $request->service == 2 ? "Udara" : "Laut";
 
         $implodeMessage = implode("\r\n", $messages);
