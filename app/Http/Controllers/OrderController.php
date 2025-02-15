@@ -212,7 +212,12 @@ class OrderController extends Controller
         $messages[] = "Total Pembelian: " . number_format($order->total, 0, ",", ".");
         $messages[] = "Total Berat Kg: " . json_decode($order->total_weight)->kg;
         $messages[] = "Total Berat Gram: " . json_decode($order->total_weight)->gram;
-        $messages[] = "Order Via: " . $request->service == 2 ? "Udara" : "Laut";
+
+        if ($request->service == 2) {
+            $messages[] = "Order Via: Udara";   
+        } else {
+            $messages[] = "Order Via: Laut";
+        }
 
         $implodeMessage = implode("\r\n", $messages);
         $implodeMessage = urlencode($implodeMessage);
