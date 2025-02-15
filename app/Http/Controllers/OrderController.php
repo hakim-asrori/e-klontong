@@ -41,6 +41,8 @@ class OrderController extends Controller
 
         $query->where('user_id', $user->id);
 
+        $query->orderBy(request('sort_by', 'orders.id'), request('sort_direction', 'desc'));
+
         $countOrder = $query->count();
         $orders = $query->paginate($request->per_page);
 
