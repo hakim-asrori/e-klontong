@@ -144,7 +144,7 @@ class OrderController extends Controller
 
             $order->update([
                 'total' => $totalPrice,
-                'total_weight' => json_encode(["kg" => $$totalWeightKg, "gram" => $totalWeightGr])
+                'total_weight' => json_encode(["kg" => $totalWeightKg, "gram" => $totalWeightGr])
             ]);
 
             DB::commit();
