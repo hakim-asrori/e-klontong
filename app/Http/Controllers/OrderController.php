@@ -118,14 +118,19 @@ class OrderController extends Controller
             ]);
 
             $totalPrice = 0;
-            $totalWeight = 0;
+            $totalWeightGr = 0;
+            $totalWeightKg = 0;
             $cartItems = [];
             foreach ($request->item_ids as $id) {
-                $cartItem = $this->cartItem->selectRaw('cart_items.id, cart_items.product_id, products.name, cart_items.quantity, products.price, products.weight, COALESCE(products.price * cart_items.quantity, 0) AS total_price, COALESCE(products.weight * cart_items.quantity, 0) AS total_weight')
+                $cartItem = $this->cartItem->selectRaw('cart_items.id, cart_items.product_id, products.name, cart_items.quantity, products.price, products.weight, products.weight_type, COALESCE(products.price * cart_items.quantity, 0) AS total_price, COALESCE(products.weight * cart_items.quantity, 0) AS total_weight')
                     ->leftJoin('products', 'products.id', '=', 'cart_items.product_id')
                     ->find($id);
                 $totalPrice += $cartItem->total_price;
-                $totalWeight += $cartItem->total_weight;
+                if ($cartItem->weight_type == 1) {
+                    $totalWeightGr += $cartItem->total_weight;
+                } else {
+                    $totalWeightKg += $cartItem->total_weight;
+                }
                 $cartItems[] = $cartItem;
 
                 $order->orderItems()->create([
@@ -139,13 +144,13 @@ class OrderController extends Controller
 
             $order->update([
                 'total' => $totalPrice,
-                'total_weight' => $totalWeight
+                'total_weight' => json_encode(["kg" => $$totalWeightKg, "gram" => $totalWeightGr])
             ]);
 
             DB::commit();
             return MessageFixer::render(
                 message: "Order successfully",
-                data: $this->formatMessage($order, $cartItems)
+                data: $this->formatMessage($order, $cartItems, $request)
             );
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -193,7 +198,7 @@ class OrderController extends Controller
         return view('filament.resources.order-resource.pages.invoice-pdf', compact('record'));
     }
 
-    protected function formatMessage($order, $cartItems)
+    protected function formatMessage($order, $cartItems, $request)
     {
         $messages = array();
         $messages[] = "## Pesanan " . $order->reference . " ##";
@@ -204,7 +209,8 @@ class OrderController extends Controller
         }
         $messages[] = "";
         $messages[] = "Total Pembelian: " . number_format($order->total, 0, ",", ".");
-        $messages[] = "Order Via: " . $order->delivery_service == 2 ? "Udara" : "Laut";
+        $messages[] = "Total Berat: " . json_decode($order->total_weight);
+        $messages[] = "Order Via: " . $request->service == 2 ? "Udara" : "Laut";
 
         $implodeMessage = implode("\r\n", $messages);
         $implodeMessage = urlencode($implodeMessage);
