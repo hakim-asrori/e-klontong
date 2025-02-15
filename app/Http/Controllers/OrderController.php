@@ -105,7 +105,7 @@ class OrderController extends Controller
             return MessageFixer::render(code: MessageFixer::INVALID_BODY, message: 'Warning Process', data: $validator->errors());
         }
 
-        $reference = "INV/" . date("Y-m/") . mt_rand(000000, 999999);
+        $reference = "INV/".Auth::user()->id . date("/Y-m/") . mt_rand(000000, 999999);
 
         try {
             $order = $this->order->create([
