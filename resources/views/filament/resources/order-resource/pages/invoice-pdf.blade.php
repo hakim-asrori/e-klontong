@@ -83,7 +83,7 @@
                             </tr>
                         @endforeach
                     </tbody>
-                    <tfoot class="bg-white dark:text-white text-dark divide-y divide-white">
+                    <tfoot class="bg-white text-dark divide-y divide-white">
                         <tr>
                             <th class="px-6 py-3 text-left font-bold uppercase tracking-wider border-e" colspan="2">
                                 Total
