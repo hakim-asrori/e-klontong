@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class SignController extends Controller
 {
@@ -39,6 +40,7 @@ class SignController extends Controller
         try {
             $token = $user->createToken('api', ['customer'])->plainTextToken;
             $user->token = $token;
+            $user->photo = asset(Storage::url($user->photo));
 
             DB::commit();
             return MessageFixer::render(code: MessageFixer::DATA_OK, message: "Login Successfully", data: $user);
