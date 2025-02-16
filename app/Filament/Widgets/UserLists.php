@@ -23,7 +23,7 @@ class UserLists extends BaseWidget
                 TextColumn::make("name")->searchable(),
                 TextColumn::make("phone")->searchable(),
                 TextColumn::make("address")->formatStateUsing(function ($state) {
-                    return $state ? "{$state->detail}, {$state->village->name}, {$state->district->name}, {$state->regency->name}, {$state->province->name}" : "Not Set";
+                    return $state ? "{$state->detail}, {$state->city}, {$state->prefektur}" : "Not Set";
                 }),
                 ToggleColumn::make("status")->label("Status")->afterStateUpdated(function ($state, $record) {
                     Notification::make()

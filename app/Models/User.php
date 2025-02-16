@@ -24,6 +24,8 @@ class User extends Authenticatable
         'phone',
         'password',
         'status',
+        'photo',
+        'role_id',
     ];
 
     /**
@@ -50,7 +52,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function address() : HasOne {
-        return $this->hasOne(Address::class, 'user_id', 'id')->where('is_default', 1);
+    public function address(): HasOne
+    {
+        return $this->hasOne(NewAddress::class, 'user_id', 'id')->where('is_default', 1);
     }
 }

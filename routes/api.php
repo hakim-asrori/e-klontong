@@ -6,14 +6,15 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SignController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\UserAuthMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route::post('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
 
 Route::get('/unauthorized', function () {
     return [
@@ -57,5 +58,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('regencies', [AddressController::class, 'getRegencies']);
         Route::post('districts', [AddressController::class, 'getDistricts']);
         Route::post('villages', [AddressController::class, 'getVillages']);
+    });
+
+    Route::prefix('user')->group(function () {
+        Route::post('show', [UserController::class, 'show']);
+        Route::post('update', [UserController::class, 'update']);
+        Route::post('change-password', [UserController::class, 'changePassword']);
     });
 });
