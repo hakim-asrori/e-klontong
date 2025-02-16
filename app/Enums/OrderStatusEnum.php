@@ -23,7 +23,6 @@ class OrderStatusEnum
 
     public static function show($id)
     {
-        dd(self::all(), $id);
         return self::all()[$id];
     }
 }
