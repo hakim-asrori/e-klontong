@@ -57,7 +57,7 @@
 
             <div class="overflow-x-auto mb-5">
                 <table class="w-full divide-y divide-white border">
-                    <thead class="bg-white dark:text-white text-dark border-b">
+                    <thead class="bg-white text-dark border-b">
                         <tr>
                             <th class="px-6 py-3 text-left font-bold uppercase tracking-wider border-e">
                                 Item
@@ -70,7 +70,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white dark:text-white text-dark divide-y divide-white">
+                    <tbody class="bg-white text-dark divide-y divide-white">
                         @foreach ($record->orderItems as $item)
                             <tr class=" border-b">
                                 <td class="px-6 py-4 whitespace-nowrap font-medium border-e">
