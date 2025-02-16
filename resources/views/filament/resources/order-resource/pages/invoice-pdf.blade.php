@@ -36,7 +36,7 @@
                 </div>
                 <div class="text-right">
                     <p><strong>Issue Date:</strong> {{ date('Y-m-d', strtotime($record->created_at)) }}</p>
-                    <p><strong>Delivery Service:</strong> {{ DeliveryServiceEnum::show($record->status) }}</p>
+                    <p><strong>Delivery Service:</strong> {{ DeliveryServiceEnum::show($record->delivery_service) }}</p>
                     <p><strong>Status:</strong> {{ OrderStatusEnum::show($record->status) }}</p>
                 </div>
             </div>
@@ -57,7 +57,7 @@
 
             <div class="overflow-x-auto mb-5">
                 <table class="w-full divide-y divide-white border">
-                    <thead class="bg-white dark:text-white text-dark border-b">
+                    <thead class="bg-white text-dark border-b">
                         <tr>
                             <th class="px-6 py-3 text-left font-bold uppercase tracking-wider border-e">
                                 Item
@@ -70,7 +70,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white dark:text-white text-dark divide-y divide-white">
+                    <tbody class="bg-white text-dark divide-y divide-white">
                         @foreach ($record->orderItems as $item)
                             <tr class=" border-b">
                                 <td class="px-6 py-4 whitespace-nowrap font-medium border-e">
@@ -83,7 +83,7 @@
                             </tr>
                         @endforeach
                     </tbody>
-                    <tfoot class="bg-white dark:text-white text-dark divide-y divide-white">
+                    <tfoot class="bg-white text-dark divide-y divide-white">
                         <tr>
                             <th class="px-6 py-3 text-left font-bold uppercase tracking-wider border-e" colspan="2">
                                 Total

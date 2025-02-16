@@ -41,6 +41,8 @@ class OrderController extends Controller
 
         $query->where('user_id', $user->id);
 
+        $query->orderBy(request('sort_by', 'orders.id'), request('sort_direction', 'desc'));
+
         $countOrder = $query->count();
         $orders = $query->paginate($request->per_page);
 
@@ -95,7 +97,7 @@ class OrderController extends Controller
             'item_ids' => 'required|array',
             'item_ids.*' => 'required|exists:cart_items,id',
             'service' => 'required|in:1,2',
-            'address_id' => 'required|exists:addresses,id',
+            'address_id' => 'required|exists:new_addresses,id',
             'address' => 'required|max:150',
             'name' => 'required|max:150',
             'phone' => 'required|max:15',
@@ -105,7 +107,7 @@ class OrderController extends Controller
             return MessageFixer::render(code: MessageFixer::INVALID_BODY, message: 'Warning Process', data: $validator->errors());
         }
 
-        $reference = "INV/" . date("Y-m/") . mt_rand(000000, 999999);
+        $reference = "INV/".Auth::user()->id . date("/Y-m/") . mt_rand(000000, 999999);
 
         try {
             $order = $this->order->create([
@@ -118,12 +120,19 @@ class OrderController extends Controller
             ]);
 
             $totalPrice = 0;
+            $totalWeightGr = 0;
+            $totalWeightKg = 0;
             $cartItems = [];
             foreach ($request->item_ids as $id) {
-                $cartItem = $this->cartItem->selectRaw('cart_items.id, cart_items.product_id, products.name, cart_items.quantity, products.price, products.weight, COALESCE(products.price * cart_items.quantity, 0) AS total_price, COALESCE(products.weight * cart_items.quantity, 0) AS total_weight')
+                $cartItem = $this->cartItem->selectRaw('cart_items.id, cart_items.product_id, products.name, cart_items.quantity, products.price, products.weight, products.weight_type, COALESCE(products.price * cart_items.quantity, 0) AS total_price, COALESCE(products.weight * cart_items.quantity, 0) AS total_weight')
                     ->leftJoin('products', 'products.id', '=', 'cart_items.product_id')
                     ->find($id);
                 $totalPrice += $cartItem->total_price;
+                if ($cartItem->weight_type == 1) {
+                    $totalWeightGr += $cartItem->total_weight;
+                } else {
+                    $totalWeightKg += $cartItem->total_weight;
+                }
                 $cartItems[] = $cartItem;
 
                 $order->orderItems()->create([
@@ -136,16 +145,18 @@ class OrderController extends Controller
             }
 
             $order->update([
-                'total' => $totalPrice
+                'total' => $totalPrice,
+                'total_weight' => json_encode(["kg" => $totalWeightKg, "gram" => $totalWeightGr])
             ]);
 
             DB::commit();
             return MessageFixer::render(
                 message: "Order successfully",
-                data: $this->formatMessage($order, $cartItems)
+                data: $this->formatMessage($order, $cartItems, $request)
             );
         } catch (\Throwable $th) {
             DB::rollBack();
+            dd($th);
             return MessageFixer::error($th->getMessage());
         }
     }
@@ -190,7 +201,7 @@ class OrderController extends Controller
         return view('filament.resources.order-resource.pages.invoice-pdf', compact('record'));
     }
 
-    protected function formatMessage($order, $cartItems)
+    protected function formatMessage($order, $cartItems, $request)
     {
         $messages = array();
         $messages[] = "## Pesanan " . $order->reference . " ##";
@@ -201,7 +212,14 @@ class OrderController extends Controller
         }
         $messages[] = "";
         $messages[] = "Total Pembelian: " . number_format($order->total, 0, ",", ".");
-        $messages[] = "Order Via: " . $order->delivery_service == 1 ? "Udara" : "Laut";
+        $messages[] = "Total Berat Kg: " . json_decode($order->total_weight)->kg;
+        $messages[] = "Total Berat Gram: " . json_decode($order->total_weight)->gram;
+
+        if ($request->service == 2) {
+            $messages[] = "Order Via: Udara";   
+        } else {
+            $messages[] = "Order Via: Laut";
+        }
 
         $implodeMessage = implode("\r\n", $messages);
         $implodeMessage = urlencode($implodeMessage);

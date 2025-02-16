@@ -8,6 +8,7 @@ class OrderStatusEnum
     const PACKING = 2;
     const SEND = 3;
     const RECEIVE = 4;
+    const CANCEL = 5;
 
     public static function all()
     {
@@ -16,6 +17,7 @@ class OrderStatusEnum
             self::PACKING => "Packing",
             self::SEND => "Send",
             self::RECEIVE => "Receive",
+            self::CANCEL => "Cancel"
         ];
     }
 
