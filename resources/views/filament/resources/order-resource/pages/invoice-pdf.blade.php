@@ -36,7 +36,7 @@
                 </div>
                 <div class="text-right">
                     <p><strong>Issue Date:</strong> {{ date('Y-m-d', strtotime($record->created_at)) }}</p>
-                    <p><strong>Delivery Service:</strong> {{ DeliveryServiceEnum::show($record->status) }}</p>
+                    <p><strong>Delivery Service:</strong> {{ DeliveryServiceEnum::show($record->delivery_service) }}</p>
                     <p><strong>Status:</strong> {{ OrderStatusEnum::show($record->status) }}</p>
                 </div>
             </div>
