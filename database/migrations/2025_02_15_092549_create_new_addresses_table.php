@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->references('id')->on('users')->cascadeOnDelete();
             $table->string('prefektur', 100);
             $table->string('city', 100);
+            $table->string('zip_code', 15);
             $table->string('name', 100);
             $table->string('phone', 15);
             $table->string('detail', 200)->default("-")->nullable();
