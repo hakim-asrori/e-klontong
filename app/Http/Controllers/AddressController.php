@@ -94,6 +94,7 @@ class AddressController extends Controller
         $validator = Validator::make($request->all(), [
             'prefektur' => 'required|max:100',
             'city' => 'required|max:100',
+            'zip_code' => 'required|max:15',
             'name' => 'required|max:100',
             'phone' => 'required|numeric|not_in:0',
             'detail' => 'max:200',
@@ -164,6 +165,7 @@ class AddressController extends Controller
         $validator = Validator::make($request->all(), [
             'prefektur' => 'required|max:100',
             'city' => 'required|max:100',
+            'zip_code' => 'required|max:15',
             'name' => 'required|max:100',
             'phone' => 'required|numeric|not_in:0',
             'detail' => 'max:200',
